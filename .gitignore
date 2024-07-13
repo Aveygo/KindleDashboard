@@ -1,0 +1,12 @@
+/target
+sensitive/*
+
+.devcontainer
+.github
+.vscode
+
+deploy.sh
+shell.nix
+
+output.png
+output.svg

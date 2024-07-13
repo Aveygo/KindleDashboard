@@ -17,7 +17,7 @@ My personal standalone kindle dashboard made using rust.
  - **Incredibly** non-future proof (more scraping than apis)
 
 ## Setup
-This display is not really for "the general public", but if you live in australia (radar was only meant for aussies), have a kindle, and want an unstable dashboard, heres the setup:
+This display is not really for "the general public", but if you live in australia (radar was only meant for aussies), have a kindle, and want a (likely) unstable dashboard, heres the setup:
 
 ### Requirements
 You will need a jailbroken kindle with ssh enabled. Make sure that it has ```xrandr```, ```eips```, and ```tmux```. Should work on almost any kindle that has these scripts, but I've only tested on a kindle paperwhite 5th gen.
@@ -78,3 +78,26 @@ Wait while the kindle spends two minutes using all it's cpu cycles to render a 1
 This is my first "real" project in Rust. Expect bugs and poorly written code. Otherwise, I really like this language! I'm not really a *rust*acean, but I'm slowly getting there.
 
 Also, for any others following in my footsteps, the kindle is more like an embedded device rather than a raspberry pi - don't expect a lot (if any) from it, and definately don't try web-engine based rendering.
+
+## Stats
+
+```git ls-files '**/*.rs' | xargs wc -l```
+
+| Lines | File |
+| ---: | :--- |
+|  101 | src/calendar.rs |
+|   90 | src/main.rs |
+|   67 | src/news.rs |
+|  121 | src/radar.rs |
+|  610 | src/renderer.rs |
+|   61 | src/stats.rs |
+|   68 | src/stats/btc.rs |
+|   29 | src/stats/halving.rs |
+|   42 | src/stats/linear_rg.rs |
+|   26 | src/stats/linux.rs |
+|   27 | src/stats/linux_version.rs |
+|   70 | src/stats/spx.rs |
+|   64 | src/stats/yield_spread.rs |
+|   60 | src/utils.rs |
+|  120 | src/weather.rs |
+| **1556** | **total** |

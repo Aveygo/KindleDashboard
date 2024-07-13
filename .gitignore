@@ -1,5 +1,6 @@
 /target
 sensitive/*
+!sensitive/add_your_creds_here
 
 .devcontainer
 .github

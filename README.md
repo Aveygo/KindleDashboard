@@ -51,6 +51,7 @@ We will use scp and ssh to transfer the files.
 
 0. SSH to the kindle 
 1. Disable the status bar (if you have one?): ```lipc-set-prop com.lab126.pillow disableEnablePillow disable```
+2. Turn off the backlight: ```echo -n 0 > /sys/devices/system/fl_tps6116x/fl_tps6116x0/fl_intensity```
 2. Run: ```tmux```
 3. Then, start the dashboard with: ```cd /dash/ && ./kindle_screen```
 4. Check that all data could be fetched and no errors were shown. The kindle should clear it's screen and eventually show the dashboard.

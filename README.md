@@ -49,10 +49,12 @@ We will use scp and ssh to transfer the files.
 
 ###  Running
 
-1. Back onto the kindle, run: ```tmux```
-2. Then, start the dashboard with: ```cd /dash/ && ./kindle_screen```
-3. Check that all data could be fetched and no errors were shown. The kindle should clear it's screen and eventually show the dashboard.
-4. Detach and leave running with ```ctrl+a```, then ```d```.
+0. SSH to the kindle 
+1. Disable the status bar (if you have one?): ```lipc-set-prop com.lab126.pillow disableEnablePillow disable```
+2. Run: ```tmux```
+3. Then, start the dashboard with: ```cd /dash/ && ./kindle_screen```
+4. Check that all data could be fetched and no errors were shown. The kindle should clear it's screen and eventually show the dashboard.
+5. Detach and leave running with ```ctrl+a```, then ```d```.
 
 Wait while the kindle spends two minutes using all it's cpu cycles to render a 1200x900 svg every 15 minutes.
 

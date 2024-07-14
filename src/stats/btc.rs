@@ -65,5 +65,5 @@ pub async fn fetch() -> Result<f64, Box<dyn std::error::Error>> {
 
     let mut algo = linear_rg::LinearRegression::new();
     algo.fit(x_tail, y_tail);
-    Ok(algo.slope)
+    Ok(algo.slope * 100.0)
 }

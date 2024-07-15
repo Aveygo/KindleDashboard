@@ -549,11 +549,11 @@ async fn render_svg(template: String) -> DynamicImage {
 
 async fn clear_screen() {
     Command::new("eips").arg("-d").arg("l=0,w=9999,h=9999").output().ok();
-    tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+    tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await;
     Command::new("eips").arg("-c").output().ok();
-    tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+    tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await;
     Command::new("eips").arg("-d").arg("l=0,w=9999,h=9999").output().ok();
-    tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+    tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await;
 }
 
 pub async fn update_screen(path: String) -> Result<std::process::Output, std::io::Error> {
@@ -562,9 +562,11 @@ pub async fn update_screen(path: String) -> Result<std::process::Output, std::io
 }
 
 
-pub async fn show_panic(panic: String) -> Result<std::process::Output, std::io::Error> {
+pub async fn show_panic(panic: &String) -> Result<std::process::Output, std::io::Error> {
     // As minimal as possible to avoid any "dangerous" code 
-    clear_screen().await;
+    tokio::time::sleep(tokio::time::Duration::from_millis(2000)).await;
+    Command::new("eips").arg("-c").output().ok();
+    tokio::time::sleep(tokio::time::Duration::from_millis(2000)).await;
     Command::new("eips").arg("2").arg("1").arg(format!("\"{panic}\"")).output()
 }
 

@@ -1,8 +1,9 @@
 
-use std::process::Command;
+use std::{process::Command, time::Duration};
 use log::info;
 use std::path::Path;
 use reqwest::blocking::get;
+use tokio::time::sleep;
 
 pub fn check_xrandr() -> Result<(), String> {
     let output = Command::new("xrandr").output();
@@ -33,11 +34,21 @@ pub fn check_eips() -> Result<(), String> {
     }
 }
 
-pub fn check_internet() -> Result<(), String> {
+pub fn check_internet() -> bool {
     match get("http://www.google.com") {
-        Ok(_) => Ok(()),
-        Err(_) => Err("Could not connect to the internet".to_string()),
+        Ok(_) => true,
+        Err(_) => false,
     }
+}
+
+pub async fn check_internet_with_retries(max_retries: u32, delay: Duration) -> Result<(), ()> {
+    for _ in 0..max_retries {
+        if check_internet() {
+            return Ok(());
+        }
+        let _ = sleep(delay).await;
+    }
+    Err(())
 }
 
 pub fn check_sensitives() -> Result<(), String> {

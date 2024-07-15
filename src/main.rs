@@ -12,7 +12,7 @@ mod utils;
 use chrono::Timelike;
 use env_logger;
 use log;
-use std::{env, panic::AssertUnwindSafe};
+use std::{env, panic::AssertUnwindSafe, time::Duration};
 use futures::FutureExt;
 
 use log::info;
@@ -36,7 +36,7 @@ async fn panic_wrapper() -> Result<(), String> {
      */
 
     let may_panic = async {
-        utils::check_internet().unwrap();
+        utils::check_internet_with_retries(3, Duration::from_secs(5)).await.unwrap();
         renderer::render_png().await
     };
 
@@ -46,21 +46,21 @@ async fn panic_wrapper() -> Result<(), String> {
         Ok(_r) => {return Ok(())},
         Err(e) => {
 
-            let panic_message;
-            if let Some(s) = e.downcast_ref::<&str>() {
+            let &panic_message;
+            if let Some(s) = e.downcast_ref::<String>() {
                 panic_message = s.to_string();
-            } else if let Some(s) = e.downcast_ref::<String>() {
+            } else if let Some(s) = e.downcast_ref::<&str>() {
                 panic_message = s.to_string();
             } else {
                 panic_message = "Panic occurred but could not be downcast to a string".to_string();
             }
             
             // Minimal render to show panic message incase it an svg based fail  
-            let r = renderer::show_panic(panic_message.clone()).await;
+            let r = renderer::show_panic(&panic_message).await;
 
             match r {
                 // We showed the panic message successfully, but we still panicked...
-                Ok(_r) => Err(panic_message), 
+                Ok(_r) => Err(format!("Showed panic message \"{panic_message}\"")),
 
                 // We cant even show the panic message. Now we REALLY panic. 
                 Err(e) => panic!("Could not show panic message: \"{panic_message}\", due to: {e}")

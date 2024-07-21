@@ -28,7 +28,7 @@ struct Data {
 }
 
 
-pub async fn fetch_news() -> Result<Vec<String>, String> {
+pub async fn fetch_news() -> Result<Vec<String>, Box<dyn std::error::Error>> {
     info!("Fetching news..");
     let now = Instant::now();
 
@@ -42,16 +42,16 @@ pub async fn fetch_news() -> Result<Vec<String>, String> {
         .await
     {
         Ok(response) => response,
-        Err(err) => return Err(format!("Failed to send request: {}", err)),
+        Err(err) => return Err(format!("Failed to send request: {}", err).into()),
     };
 
     if !response.status().is_success() {
-        return Err(format!("Request failed with status: {}", response.status()));
+        return Err(format!("Request failed with status: {}", response.status()).into());
     }
 
     let news_data: RedditResponse = match response.json().await {
         Ok(data) => data,
-        Err(err) => return Err(format!("Failed to read response json: {}", err)),
+        Err(err) => return Err(format!("Failed to read response json: {}", err).into()),
     };
 
     let mut result = vec![];

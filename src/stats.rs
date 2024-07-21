@@ -25,7 +25,7 @@ pub struct Stats {
     pub kernel_version: Option<String>
 }
 
-pub async fn fetch_stats() -> Result<Stats, reqwest::Error> {
+pub async fn fetch_stats() -> Result<Stats, Box<dyn std::error::Error>> {
     
     info!("Fetching statistics...");
     let now = Instant::now();

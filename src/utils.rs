@@ -2,7 +2,7 @@
 use std::{process::Command, time::Duration};
 use log::info;
 use std::path::Path;
-use reqwest::blocking::get;
+use reqwest::get;
 use tokio::time::sleep;
 
 pub fn check_xrandr() -> Result<(), String> {
@@ -34,8 +34,9 @@ pub fn check_eips() -> Result<(), String> {
     }
 }
 
-pub fn check_internet() -> bool {
-    match get("http://www.google.com") {
+pub async fn check_internet() -> bool {
+    info!("Checking for internet...");
+    match get("http://www.google.com").await {
         Ok(_) => true,
         Err(_) => false,
     }
@@ -43,7 +44,7 @@ pub fn check_internet() -> bool {
 
 pub async fn check_internet_with_retries(max_retries: u32, delay: Duration) -> Result<(), ()> {
     for _ in 0..max_retries {
-        if check_internet() {
+        if check_internet().await {
             return Ok(());
         }
         let _ = sleep(delay).await;

@@ -26,6 +26,9 @@ use std::time::Instant;
 use log::{info, warn};
 use futures::join;
 
+use async_std::future;
+use std::time::Duration as stdDuration;
+
 #[derive(Debug)]
 struct KindleDisplayData {
     short_stats: Option<stats::Stats>,
@@ -39,11 +42,13 @@ async fn build_all_data() -> KindleDisplayData {
     info!("Fetching all data...");
     let now = Instant::now();
 
-    let short_stats = stats::fetch_stats();
-    let weather = weather::fetch_weather();
-    let news = news::fetch_news();
-    let calendar_event = calendar::fetch_event();
-    let image = radar::fetch_radar();
+    let timeout = stdDuration::from_secs(15);
+
+    let short_stats = future::timeout(timeout, stats::fetch_stats());
+    let weather = future::timeout(timeout, weather::fetch_weather());
+    let news = future::timeout(timeout, news::fetch_news());
+    let calendar_event = future::timeout(timeout, calendar::fetch_event());
+    let image = future::timeout(timeout, radar::fetch_radar());
 
     let (
         short_stats, 
@@ -53,9 +58,18 @@ async fn build_all_data() -> KindleDisplayData {
         image
     )  = join!(short_stats, weather, news, calendar_event, image);
 
+    
     let elapsed = format!("{:.2?}", now.elapsed());
     info!("Fetched all kindle data in {elapsed}");
 
+    // Checking timeout messages
+    let short_stats = match short_stats {Ok(r) => {r}, Err(e) => Err(format!("Timeout: {e}").into())};
+    let weather = match weather {Ok(r) => {r}, Err(e) => Err(format!("Timeout: {e}").into())};
+    let news = match news {Ok(r) => {r}, Err(e) => Err(format!("Timeout: {e}").into())};
+    let calendar_event = match calendar_event {Ok(r) => {r}, Err(e) => Err(format!("Timeout: {e}").into())};
+    let image = match image {Ok(r) => {r}, Err(e) => Err(format!("Timeout: {e}").into())};
+
+    // Warning on error
     match &short_stats {Ok(_) => {}, Err(e) => warn!("Short stats failed: {e}")}
     match &weather {Ok(_) => {}, Err(e) => warn!("Weather failed: {e}")}
     match &news {Ok(_) => {}, Err(e) => warn!("News failed: {e}")}
@@ -562,12 +576,22 @@ pub async fn update_screen(path: String) -> Result<std::process::Output, std::io
 }
 
 
-pub async fn show_panic(panic: &String) -> Result<std::process::Output, std::io::Error> {
+pub async fn show_panic(panic: &String) -> Result<(), Box<dyn std::error::Error>> {
     // As minimal as possible to avoid any "dangerous" code 
-    tokio::time::sleep(tokio::time::Duration::from_millis(2000)).await;
-    Command::new("eips").arg("-c").output().ok();
-    tokio::time::sleep(tokio::time::Duration::from_millis(2000)).await;
-    Command::new("eips").arg("2").arg("1").arg(format!("\"{panic}\"")).output()
+    if std::env::var("NOT_KINDLE").is_err() {
+        tokio::time::sleep(tokio::time::Duration::from_millis(2000)).await;
+        Command::new("eips").arg("-c").output().ok();
+        tokio::time::sleep(tokio::time::Duration::from_millis(2000)).await;
+        let output = Command::new("eips").arg("2").arg("1").arg(format!("\"{panic}\"")).output();
+        match output {
+            Ok(_) => Ok(()),
+            Err(e) => Err(format!("Could not show error: {e}").into())
+        }
+    } else {
+        info!("Skipping showing the panic due to env NOT_KINDLE");
+        Ok(())
+    } 
+    
 }
 
 

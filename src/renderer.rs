@@ -42,7 +42,7 @@ async fn build_all_data() -> KindleDisplayData {
     info!("Fetching all data...");
     let now = Instant::now();
 
-    let timeout = stdDuration::from_secs(15);
+    let timeout = stdDuration::from_secs(30);
 
     let short_stats = future::timeout(timeout, stats::fetch_stats());
     let weather = future::timeout(timeout, weather::fetch_weather());

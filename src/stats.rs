@@ -8,12 +8,11 @@ mod halving;
 mod linux_version;
 
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
 
 use log::info;
 use std::time::Instant;
 
-#[derive(Deserialize, Debug)]
+#[derive(Debug)]
 pub struct Stats {
     /* Uses a sneaky way to scrap financial data from FRED */
     pub d_spx500: Option<f64>,

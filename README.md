@@ -27,9 +27,9 @@ You will need a jailbroken kindle with ssh enabled. Make sure that it has ```xra
 1. Install rust/cargo & [Cross](https://github.com/cross-rs/cross) and build the project with: ```RUSTFLAGS="-C target-feature=+crt-static" cross build --target arm-unknown-linux-musleabi --release```. This is the only reliable way of building for the kindle.
 
 ### Config
-We have three things we needs to configure for all the information in the dashboard to be fetched. This information is stored in a folder named ```sensitive/```, which you should find at the root of the repo you just cloned, and is where the following will be (temporarily) stored.
+We have three things we needs to configure for all the information in the dashboard to be fetched. This information is stored in a folder named ```sensitive/```, which you should find at the root of the repo you just cloned, and is where the following will be stored in the kindle.
 
-1. **Google calendar** - Setup a google [OAuth Client ID](https://console.cloud.google.com/apis/credentials). Save the json client secret to sensitive/creds.json.  Make sure to add yourself as a test user and enable the [google-calendar api](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com) (and set up the calendar scope...).
+1. **ICS Calendars** ~~Google calendar~~ - You can export your google calendars as ics urls (Calendar Settings -> Integrate calendar -> Secret address in iCal format). Save them to sensitive/calendars.json as ```{"urls": ["<eg url>", ...]}```
 
 3. **OpenWeatherMap** - Create an [API](https://openweathermap.org/api) account. Save the api token in sensitive/openweatherkey.json as ```{"key":"MYKEY"}```
 

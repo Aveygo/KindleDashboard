@@ -24,7 +24,7 @@ You will need a jailbroken kindle with ssh enabled. Make sure that it has ```xra
 
 ### Building
 0. ```git clone``` this repo.
-1. Install rust/cargo & [Cross](https://github.com/cross-rs/cross) and build the project with: ```RUSTFLAGS="-C target-feature=+crt-static" cross build --target arm-unknown-linux-musleabi --release```. This is the only reliable way of building for the kindle.
+1. Install rust/cargo & [Cross](https://github.com/cross-rs/cross) and build the project with: ```RUSTFLAGS="-C target-feature=+crt-static -C opt-level=s -C strip=symbols" cross build --target arm-unknown-linux-musleabi --release```. This is the only reliable way of building for the kindle.
 
 ### Config
 We have three things we needs to configure for all the information in the dashboard to be fetched. This information is stored in a folder named ```sensitive/```, which you should find at the root of the repo you just cloned, and is where the following will be stored in the kindle.

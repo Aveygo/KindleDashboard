@@ -245,34 +245,40 @@ fn format_news(template: String, data: &KindleDisplayData) -> String {
     new_template
 }
 
+fn escape_xml(s: &str) -> String {
+    s.replace("&", "&amp;")
+     .replace("<", "&lt;")
+     .replace(">", "&gt;")
+     .replace("\"", "&quot;")
+     .replace("'", "&apos;")
+}
+
 fn format_calendar(template: String, data: &KindleDisplayData) -> String {
     let mut template = template.clone();
     match &data.calendar_event {
         Some(possible_calendar_event) => {
-            
             match possible_calendar_event {
                 Some(calendar_event) => {
-                    let name = calendar_event.name.clone();
+                    let name = escape_xml(&calendar_event.name);
                     let time = calendar_event.start_time.clone();
-                    let remaining= time_remaining(time);
+                    let remaining = escape_xml(&time_remaining(time));
 
                     template = template.replace("#G2", &format!("in {remaining}"));
                     template = template.replace("#G1", &generate_svg_text(vec![name], 5, 33.0, 3080, 180, 100, 1.2))
                 }
-                None=> {
+                None => {
                     template = template.replace("#G2", "");
                     template = template.replace("#G1", "No upcoming events");
                 }
             }
         },
-
         None => {
             template = template.replace("#G2", "ERR!");
             template = template.replace("#G1", "Could not fetch any events");
         }
     };
 
-    return template;
+    template
 }
 
 fn format_stats(template: String, data: &KindleDisplayData) -> String {
@@ -520,9 +526,8 @@ fn get_screen_dim() -> Option<Screen> {
 async fn create_output_svg() -> String {
     let mut template = include_str!("template.svg").to_string();
     
-    //let data = build_some_data().await;
     let data = build_all_data().await;
-    
+
     template = format_news(template, &data);
     template = format_calendar(template, &data);
     template = format_stats(template, &data);

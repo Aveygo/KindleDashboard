@@ -44,7 +44,7 @@ pub async fn get_image(url:String) -> Result<image::DynamicImage, String> {
 }
 
 pub async fn get_radar_id(station:String) -> Result<String, Box<dyn std::error::Error>> {
-    let url = format!("http://www.bom.gov.au/products/{station}.loop.shtml");
+    let url = format!("https://reg.bom.gov.au/products/{station}.loop.shtml");
     
     let client = reqwest::Client::new();
 
@@ -98,10 +98,10 @@ pub async fn fetch_radar() -> Result<DynamicImage, String> {
     let station = json.station.clone();
 
     if let Ok(radar_id) = get_radar_id(station.clone()).await {
-        if let Ok(image1) = get_image(format!("http://www.bom.gov.au{}", radar_id)).await {
+        if let Ok(image1) = get_image(format!("https://reg.bom.gov.au{}", radar_id)).await {
             let image1 = hide_banner(&image1);
 
-            if let Ok(mut image2) = get_image(format!("http://www.bom.gov.au/products/radar_transparencies/{station}.background.png")).await {
+            if let Ok(mut image2) = get_image(format!("https://reg.bom.gov.au/products/radar_transparencies/{station}.background.png")).await {
                 imageops::overlay(&mut image2, &image1, 0, 0);
                 info!("Radar took {:.2?}", now.elapsed());
                 return Ok(image2);
